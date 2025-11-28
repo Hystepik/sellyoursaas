@@ -875,6 +875,7 @@ if ($action == "automigration") {
 		print '<input type="hidden" name="ticketcategory" value="'.(GETPOST('ticketcategory_back', 'alpha') ?: GETPOST('ticketcategory', 'alpha')).'">';
 		print '<input type="hidden" name="subject" value="'.$langs->trans("MigrationErrorSubject").'">';
 		print '<input type="hidden" name="content" value="'.$migrationerrormessage.'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '</form>';
 		print'</div>';
 	} else {
