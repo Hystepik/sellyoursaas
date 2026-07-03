@@ -470,6 +470,79 @@ print '
                   </div>
         		';
 
+
+		//Get date of last commission request
+		$mintimetoclaimreached = true;
+		$mincustomerstoclaimreached = false;
+		$maxamounttoclaim = price2num($commoldystem + $totalamountcommission - $totalpaidht, 'MT');
+		$minamounttoclaim = getDolGlobalInt("SELLYOURSAAS_MINAMOUNT_TO_CLAIM", 100);
+		$minnumbercustomertoclaim = getDolGlobalInt("SELLYOURSAAS_MIN_CUSTOMER_NUMBER_TO_CLAIM", 2);
+		$minmonthtoclaim = getDolGlobalInt("SELLYOURSAAS_MIN_MONTH_TO_CLAIM", 3);
+
+		$now = dol_now();
+		$mindateforrequest = dol_time_plus_duree($now, ($minmonthtoclaim * -1), 'm');
+
+		$sql = "SELECT count(rowid) as nbinvoices";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+		$sql .= " WHERE fk_soc = ".((int) $mythirdpartyaccount->id);
+		$sql .= " AND datef >= '".$db->idate($mindateforrequest)."'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj->nbinvoices > 0) {
+				$mintimetoclaimreached = false;
+			}
+		} else {
+			dol_print_error($db);
+		}
+
+		$sql = "SELECT count(rowid) as nbcustomers";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql .= " WHERE parent = ".((int) $mythirdpartyaccount->id);
+		$sql .= " AND status = 1";
+		$sql .= " AND client IN (1,3)";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj->nbcustomers >= 2) {
+				$mincustomerstoclaimreached = true;
+			}
+		} else {
+			dol_print_error($db);
+		}
+
+		print '
+		<div class="row">
+	      <div class="col-md-12">
+
+			<!-- my commissions form -->
+	        <div class="portlet light">
+	          <div class="portlet-title">
+	            <div class="caption-subject font-green-sharp bold uppercase">'.$langs->trans("MyCommissionsClaimForm").' ('.$conf->currency.')</div>';
+		if ($maxamounttoclaim < $minamounttoclaim || !$mintimetoclaimreached || !$mincustomerstoclaimreached) {
+			print '<div class="note note-warning">';
+			print '<h3>';
+			print $langs->trans("RequirementsToClaimNotReached");
+			print '</h3>';
+			print $langs->trans("RequirementsToClaimNotReachedDesc", $minnumbercustomertoclaim, price($minamounttoclaim, 0, $langs, 1, -1, -1, $conf->currency), $minmonthtoclaim);
+			print '</div>';
+		} else {
+			print '<div class="div-table-responsive-no-min">
+			<table class="noborder centpercent tablecommission">
+			<tr class="liste_titre">';
+				// TODO: Form
+			print '</tr>';
+
+			print '</table>';
+			print '</div>';
+
+		}
+		
+		print '
+        </div></div>
+                    </div>
+                  </div>
+        		';
 		print '
 
 

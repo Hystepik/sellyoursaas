@@ -988,3 +988,5 @@ SEPADoesNotUnsupendInstantly=Please note that the SEPA payment method does not a
 SorryOptionsNotAvailableDuringTestPeriod=Sorry, this feature is not available during the test period. Please confirm your instance by entering your payment mode from menu <b>%s</b> to enable installation of options
 SectionSoonAvailable=This section is being updated. It will be available soon.
 HavingAtLeastOneInstance=Having at least one instance with
+RequirementsToClaimNotReached=The requirements to claim have not been reached.
+RequirementsToClaimNotReachedDesc=Please verify that you have at least %s customers(s), that the minimum amount of %s has been reached and that your last claim was at least %s month ago.
